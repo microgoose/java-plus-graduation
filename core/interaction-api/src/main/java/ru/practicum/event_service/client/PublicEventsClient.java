@@ -8,7 +8,8 @@ import ru.practicum.event_service.dto.EventFullDto;
 import ru.practicum.event_service.dto.EventShortDto;
 
 import java.util.List;
-@FeignClient(name = "event-service")
+
+@FeignClient(name = "${event-service.name}", url = "${event-service.url}", contextId = "PublicEventsClient")
 public interface PublicEventsClient {
 
     @GetMapping("/events")

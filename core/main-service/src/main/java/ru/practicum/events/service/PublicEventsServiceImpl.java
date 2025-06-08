@@ -143,6 +143,7 @@ public class PublicEventsServiceImpl implements PublicEventsService {
         } else {
             start = LocalDateTime.parse(searchEventsParams.getRangeStart(), DateConfig.FORMATTER);
         }
+
         if (Objects.isNull(searchEventsParams.getRangeEnd())) {
             builder.and(QEvent.event.eventDate.goe(start));
         } else {

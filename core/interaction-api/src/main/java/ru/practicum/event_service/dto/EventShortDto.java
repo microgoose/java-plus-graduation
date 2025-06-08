@@ -8,11 +8,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.user_service.dto.UserShortDto;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventShortDto {
+public class EventShortDto implements EventViews {
 
     private Long id;
 
@@ -29,7 +31,7 @@ public class EventShortDto {
     private Boolean paid;
 
     @NotNull
-    private String eventDate;
+    private LocalDateTime eventDate;
 
     private Long confirmedRequests;
 

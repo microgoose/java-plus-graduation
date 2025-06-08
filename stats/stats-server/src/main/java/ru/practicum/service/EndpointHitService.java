@@ -55,7 +55,7 @@ public class EndpointHitService {
     @Transactional
     public void saveHitsGroup(ManyEndPointDto many) {
         //подготовка списка
-        String app = "ewm-service";
+        String app = "event-service";
         LocalDateTime nun = LocalDateTime.now();
         List<EndpointHit> hitsList = many.getUris().stream()
                 .map(u -> EndpointHit.builder()

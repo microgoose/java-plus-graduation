@@ -17,7 +17,7 @@ public class NewCompilationDto {
 
     private List<@NotNull Long> events;
 
-    private Boolean pinned = false;
+    private Boolean pinned;
 
     @NotBlank
     @Size(min = 1, max = 50)

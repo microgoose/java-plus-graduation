@@ -6,13 +6,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.event_service.model.EventState;
 import ru.practicum.user_service.dto.UserShortDto;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventFullDto {
+public class EventFullDto implements EventViews {
 
     private Long id;
 
@@ -32,17 +35,17 @@ public class EventFullDto {
     private Boolean paid;
 
     @NotNull
-    private String eventDate;
+    private LocalDateTime eventDate;
 
-    private String createdOn;
+    private LocalDateTime createdOn;
 
-    private String publishedOn;
+    private LocalDateTime publishedOn;
 
     private Integer participantLimit;
 
     private Boolean requestModeration;
 
-    private String state;
+    private EventState state;
 
     private Long confirmedRequests;
 

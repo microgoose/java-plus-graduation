@@ -11,6 +11,8 @@ import ru.practicum.dto.ReadEndpointHitDto;
 import ru.practicum.dto.TakeHitsDto;
 import ru.practicum.model.EndpointHit;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
@@ -64,8 +66,10 @@ public class EndpointHitRepository {
                 urisString.append(", ").append(uris.get(i));
             }
 
-            params.addValue("uris", uris);
             sql.append(" HAVING uri IN (:uris)");
+            params.addValue("uris", uris.stream()
+                    .map(u -> URLEncoder.encode(u, StandardCharsets.UTF_8))
+                    .toList());
         }
 
         return jdbc.query(sql.toString(), params, mapper);

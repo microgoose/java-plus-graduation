@@ -2,11 +2,14 @@ package ru.practicum.service;
 
 import ru.practicum.event_service.dto.EventFullDto;
 import ru.practicum.event_service.dto.EventShortDto;
+import ru.practicum.event_service.dto.LookEventDto;
+import ru.practicum.event_service.dto.SearchEventsDto;
 
 import java.util.List;
+
 public interface PublicEventService {
-    List<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid,
-                                  String rangeStart, String rangeEnd, Boolean onlyAvailable,
-                                  String sort, int from, int size);
-    EventFullDto getEventById(Long id);
+
+    List<EventShortDto> getEvents(SearchEventsDto searchEventsDto, LookEventDto lookEventDto);
+
+    EventFullDto getEventById(Long id, LookEventDto lookEventDto);
 }

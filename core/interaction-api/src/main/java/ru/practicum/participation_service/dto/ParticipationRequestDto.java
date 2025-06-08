@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.participation_service.model.ParticipationRequestStatus;
+
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,7 +20,7 @@ public class ParticipationRequestDto {
 
     private Long requester;
 
-    private String status;
+    private ParticipationRequestStatus status;
 
-    private String created;
+    private LocalDateTime created;
 }

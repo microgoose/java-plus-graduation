@@ -5,7 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.event_service.dto.CompilationDto;
 import ru.practicum.event_service.dto.NewCompilationDto;
 import ru.practicum.event_service.dto.UpdateCompilationRequest;
-@FeignClient(name = "event-service")
+
+@FeignClient(name = "${event-service.name}", url = "${event-service.url}", contextId = "AdminCompilationsClient")
 public interface AdminCompilationsClient {
 
     @PostMapping("/admin/compilations")

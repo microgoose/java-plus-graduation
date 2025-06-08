@@ -6,13 +6,17 @@ import ru.practicum.user_service.dto.NewUserRequest;
 import ru.practicum.user_service.dto.UserDto;
 
 import java.util.List;
-@FeignClient(name = "user-service")
+
+@FeignClient(name = "${user-service.name}", url = "${user-service.url}", contextId = "AdminUsersClient")
 public interface AdminUsersClient {
 
     @GetMapping("/admin/users")
     List<UserDto> getUsers(@RequestParam(required = false) List<Long> ids,
                            @RequestParam(defaultValue = "0") int from,
                            @RequestParam(defaultValue = "10") int size);
+
+    @GetMapping("/admin/users/{userId}")
+    UserDto getUser(@PathVariable Long userId);
 
     @PostMapping("/admin/users")
     UserDto create(@RequestBody NewUserRequest request);

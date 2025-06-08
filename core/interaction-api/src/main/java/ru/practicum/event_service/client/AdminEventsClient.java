@@ -7,7 +7,7 @@ import ru.practicum.event_service.dto.UpdateEventAdminRequest;
 
 import java.util.List;
 
-@FeignClient(name = "event-service")
+@FeignClient(name = "${event-service.name}", url = "${event-service.url}", contextId = "AdminEventsClient")
 public interface AdminEventsClient {
 
     @GetMapping("/admin/events")
