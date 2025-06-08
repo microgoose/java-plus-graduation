@@ -1,10 +1,10 @@
 package ru.practicum.users.mapper;
 
+import org.apache.logging.log4j.util.Strings;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 import org.mapstruct.Named;
-import org.apache.logging.log4j.util.Strings;
+import org.mapstruct.factory.Mappers;
 import ru.practicum.users.dto.NewUserRequest;
 import ru.practicum.users.model.User;
 
