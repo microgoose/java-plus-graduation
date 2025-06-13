@@ -8,7 +8,8 @@ import ru.practicum.event_service.dto.CompilationDto;
 
 import java.util.List;
 
-@FeignClient(name = "${event-service.name}", url = "${event-service.url}", contextId = "PublicCompilationsClient")
+//@FeignClient(name = "${event-service.name}", url = "${event-service.url}", contextId = "PublicCompilationsClient")
+@FeignClient(name = "event-service", contextId = "PublicCompilationsClient")
 public interface PublicCompilationsClient {
 
     @GetMapping("/compilations")

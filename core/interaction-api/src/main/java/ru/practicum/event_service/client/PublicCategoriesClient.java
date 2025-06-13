@@ -8,7 +8,8 @@ import ru.practicum.event_service.dto.CategoryDto;
 
 import java.util.List;
 
-@FeignClient(name = "${event-service.name}", url = "${event-service.url}", contextId = "PublicCategoriesClient")
+//@FeignClient(name = "${event-service.name}", url = "${event-service.url}", contextId = "PublicCategoriesClient")
+@FeignClient(name = "event-service", contextId = "PublicCategoriesClient")
 public interface PublicCategoriesClient {
 
     @GetMapping("/categories")

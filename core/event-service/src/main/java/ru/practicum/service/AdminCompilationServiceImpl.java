@@ -10,7 +10,7 @@ import ru.practicum.event_service.dto.UpdateCompilationRequest;
 import ru.practicum.model.Compilation;
 import ru.practicum.repository.CompilationRepository;
 
-import java.util.Set;
+import java.util.HashSet;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +40,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         }
 
         if (dto.getEvents() != null) {
-            compilation.setEvents(Set.copyOf(dto.getEvents()));
+            compilation.setEvents(new HashSet<>(dto.getEvents()));
         }
 
         return compilationMapper.toDto(compilationRepository.save(compilation));

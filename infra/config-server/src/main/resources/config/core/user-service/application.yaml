@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: user-service
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: UTC
   jpa:
     hibernate:
       ddl-auto: none

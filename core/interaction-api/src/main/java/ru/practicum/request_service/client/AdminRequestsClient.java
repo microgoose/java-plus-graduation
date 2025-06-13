@@ -10,7 +10,8 @@ import ru.practicum.request_service.dto.RequestSearchDto;
 
 import java.util.List;
 
-@FeignClient(name = "${request-service.name}", url = "${request-service.url}", contextId = "AdminRequestsClient")
+//@FeignClient(name = "${request-service.name}", url = "${request-service.url}", contextId = "AdminRequestsClient")
+@FeignClient(name = "request-service", contextId = "AdminRequestsClient")
 public interface AdminRequestsClient {
 
     @GetMapping("/participation-requests/count/{eventId}")

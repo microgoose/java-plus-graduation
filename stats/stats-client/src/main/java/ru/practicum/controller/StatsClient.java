@@ -13,7 +13,8 @@ import ru.practicum.dto.ReadEndpointHitDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@FeignClient(name = "${stats-service.name}", url = "${stats-service.url}")
+//@FeignClient(name = "${stats-service.name}", url = "${stats-service.url}")
+@FeignClient(name = "stats-server")
 public interface StatsClient {
 
     @PostMapping("/hit")
