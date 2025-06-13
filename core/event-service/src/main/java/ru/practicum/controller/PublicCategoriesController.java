@@ -8,6 +8,7 @@ import ru.practicum.event_service.dto.CategoryDto;
 import ru.practicum.service.PublicCategoryService;
 
 import java.util.List;
+
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor

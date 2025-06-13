@@ -46,7 +46,7 @@ public class PublicEventsController {
 
         LocalDateTime start = Objects.isNull(rangeStart) ? LocalDateTime.now() : rangeStart;
         LocalDateTime end = Objects.nonNull(rangeEnd) ? rangeEnd : null;
-        
+
         if (Objects.nonNull(end) && !end.isAfter(start))
             throw new IllegalArgumentException("Invalid dates");
 
