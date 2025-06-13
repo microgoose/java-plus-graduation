@@ -1,14 +1,9 @@
 server:
-  port: 8083
+  port: 0
 
 spring:
   application:
-    name: user-service
-
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: UTC
-
+    name: comment-service
   jpa:
     hibernate:
       ddl-auto: none
@@ -16,25 +11,15 @@ spring:
       hibernate:
         format_sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
   sql:
     init:
       mode: always
-
   datasource:
     url: jdbc:postgresql://localhost:6543/ewm-database
     username: user
     password: password
     driver-class-name: org.postgresql.Driver
 
-event-service:
-  name: event-service
-  url: http://localhost:8081
-
-request-service:
-  name: request-service
-  url: http://localhost:8082
-
-user-service:
-  name: user-service
-  url: http://localhost:8083
+stats:
+  client:
+    serviceId: stats-server

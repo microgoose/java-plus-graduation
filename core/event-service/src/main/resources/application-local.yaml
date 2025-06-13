@@ -35,8 +35,8 @@ event-service:
   name: event-service
   url: http://localhost:8081
 
-participation-service:
-  name: participation-service
+request-service:
+  name: request-service
   url: http://localhost:8082
 
 user-service:

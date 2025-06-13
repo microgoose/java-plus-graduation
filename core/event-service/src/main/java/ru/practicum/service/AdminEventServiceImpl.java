@@ -13,11 +13,11 @@ import ru.practicum.event_service.model.EventStateAction;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
 import ru.practicum.model.Location;
-import ru.practicum.participation_service.client.AdminRequestsClient;
 import ru.practicum.repository.CategoryRepository;
 import ru.practicum.repository.EventRepository;
 import ru.practicum.repository.EventSpecification;
 import ru.practicum.repository.LocationRepository;
+import ru.practicum.request_service.client.AdminRequestsClient;
 
 import java.time.LocalDateTime;
 import java.util.List;

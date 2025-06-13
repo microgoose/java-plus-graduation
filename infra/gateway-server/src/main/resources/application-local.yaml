@@ -11,17 +11,17 @@ spring:
 
     gateway:
       routes:
-      - id: participation_service_route
+      - id: request_service_route
         uri: http://localhost:8082
         predicates:
           - Path=/participation-requests/**
 
-      - id: participation_service_user_events_route
+      - id: request_service_user_events_route
         uri: http://localhost:8082
         predicates:
           - Path=/users/{userId}/events/{eventId}/requests
 
-      - id: participation_service_user_requests_route
+      - id: request_service_user_requests_route
         uri: http://localhost:8082
         predicates:
           - Path=/users/{userId}/requests/**

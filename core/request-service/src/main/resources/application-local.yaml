@@ -1,9 +1,9 @@
 server:
-  port: 8083
+  port: 8082
 
 spring:
   application:
-    name: user-service
+    name: request-service
 
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
@@ -26,6 +26,10 @@ spring:
     username: user
     password: password
     driver-class-name: org.postgresql.Driver
+
+stats-service:
+  name: stats-service
+  url: http://localhost:9090
 
 event-service:
   name: event-service

@@ -12,12 +12,12 @@ import ru.practicum.error.NotFoundException;
 import ru.practicum.event_service.dto.*;
 import ru.practicum.event_service.model.EventState;
 import ru.practicum.model.Event;
-import ru.practicum.participation_service.client.AdminRequestsClient;
-import ru.practicum.participation_service.dto.ParticipationRequestDto;
-import ru.practicum.participation_service.dto.RequestSearchDto;
-import ru.practicum.participation_service.model.ParticipationRequestStatus;
 import ru.practicum.repository.EventRepository;
 import ru.practicum.repository.EventSpecification;
+import ru.practicum.request_service.client.AdminRequestsClient;
+import ru.practicum.request_service.dto.ParticipationRequestDto;
+import ru.practicum.request_service.dto.RequestSearchDto;
+import ru.practicum.request_service.model.ParticipationRequestStatus;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;

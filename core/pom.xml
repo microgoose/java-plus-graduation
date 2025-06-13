@@ -11,7 +11,7 @@
 
     <modules>
         <module>event-service</module>
-        <module>participation-service</module>
+        <module>request-service</module>
         <module>user-service</module>
         <module>interaction-api</module>
     </modules>
