@@ -25,6 +25,14 @@
             <artifactId>stats-dto</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <!-- Business Libraries-->
+        <dependency>
+            <groupId>ru.practicum</groupId>
+            <artifactId>interaction-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <!-- end of dependency with common classes -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
