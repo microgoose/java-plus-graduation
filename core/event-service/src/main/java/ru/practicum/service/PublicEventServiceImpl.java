@@ -19,8 +19,6 @@ import ru.practicum.request_service.dto.ParticipationRequestDto;
 import ru.practicum.request_service.dto.RequestSearchDto;
 import ru.practicum.request_service.model.ParticipationRequestStatus;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -114,6 +112,10 @@ public class PublicEventServiceImpl implements PublicEventService {
     public void countViews(List<? extends EventViews> events, LocalDateTime dateStart, LocalDateTime dateEnd, boolean unique) {
         if (events.isEmpty())
             return;
+        if (dateStart == null)
+            dateStart = LocalDateTime.of(1970, 1, 1, 1, 1, 1);
+        if (dateEnd == null)
+            dateEnd = LocalDateTime.of(3000, 1, 1, 1, 1, 1);
 
         List<String> uris = events.stream().map(e -> "/events/" + e.getId()).toList();
         List<ReadEndpointHitDto> hits = statsClient.getStats(dateStart, dateEnd, uris, unique);
@@ -121,7 +123,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         // Заносим значения views в список events
         Map<Long, Long> workMap = new HashMap<>();
         for (ReadEndpointHitDto r : hits) {
-            String decoded = URLDecoder.decode(r.getUri(), StandardCharsets.UTF_8);
+            String decoded = r.getUri();
             long i = Long.parseLong(decoded.substring(decoded.lastIndexOf("/") + 1));
             workMap.put(i, (long) r.getHits());
         }

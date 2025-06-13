@@ -38,28 +38,22 @@ public class StatsController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<Collection<ReadEndpointHitDto>> getHits(
-            @RequestParam(required = false)
-            @DateTimeFormat(pattern = DateConfig.FORMAT)
-            Optional<LocalDateTime> start,
-
-            @RequestParam(required = false)
-            @DateTimeFormat(pattern = DateConfig.FORMAT)
-            Optional<LocalDateTime> end,
-
-            @RequestParam(required = false)
-            Optional<List<String>> uris,
-
-            @RequestParam(required = false, defaultValue = "false")
-            boolean unique) {
-
+    public ResponseEntity<Collection<ReadEndpointHitDto>> getHits(@RequestParam
+                                                                  @DateTimeFormat(pattern = DateConfig.FORMAT)
+                                                                  LocalDateTime start,
+                                                                  @RequestParam
+                                                                  @DateTimeFormat(pattern = DateConfig.FORMAT)
+                                                                  LocalDateTime end,
+                                                                  @RequestParam(required = false)
+                                                                  Optional<List<String>> uris,
+                                                                  @RequestParam(required = false, defaultValue = "false")
+                                                                  boolean unique) {
         TakeHitsDto takeHitsDto = TakeHitsDto.builder()
-                .start(start.orElse(LocalDateTime.of(1970, 1, 1, 0, 0)))
-                .end(end.orElse(LocalDateTime.now()))
+                .start(start)
+                .end(end)
                 .uris(uris.orElse(List.of()))
                 .unique(unique)
                 .build();
-
         log.info("\nStatsController.getHits accepted {}", takeHitsDto);
         return ResponseEntity.status(HttpStatus.OK).body(endpointHitService.getHits(takeHitsDto));
     }

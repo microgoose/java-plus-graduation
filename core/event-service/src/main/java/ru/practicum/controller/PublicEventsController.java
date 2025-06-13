@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.event_service.dto.*;
 import ru.practicum.service.PublicEventService;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -52,7 +50,7 @@ public class PublicEventsController {
 
         LookEventDto lookEventDto = LookEventDto.builder()
                 .id(null)
-                .uri(URLEncoder.encode(request.getRequestURI(), StandardCharsets.UTF_8))
+                .uri(request.getRequestURI())
                 .ip(request.getRemoteAddr())
                 .build();
 
@@ -80,7 +78,7 @@ public class PublicEventsController {
 
         return ResponseEntity.ok(eventService.getEventById(id, LookEventDto.builder()
                 .id(null)
-                .uri(URLEncoder.encode(request.getRequestURI(), StandardCharsets.UTF_8))
+                .uri(request.getRequestURI())
                 .ip(request.getRemoteAddr())
                 .build()));
     }
