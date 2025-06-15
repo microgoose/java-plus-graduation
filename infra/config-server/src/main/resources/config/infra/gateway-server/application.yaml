@@ -2,9 +2,45 @@ spring:
   cloud:
     gateway:
       discovery.locator.enabled: true
+
       routes:
-        - id: main_service_route
-          uri: lb://main-service
+        - id: request_service_route
+          uri: lb://request-service
+          predicates:
+            - Path=/participation-requests/**
+
+        - id: request_service_user_events_route
+          uri: lb://request-service
+          predicates:
+            - Path=/users/{userId}/events/{eventId}/requests
+
+        - id: request_service_user_requests_route
+          uri: lb://request-service
+          predicates:
+            - Path=/users/{userId}/requests/**
+
+        - id: user_service_route
+          uri: lb://user-service
+          predicates:
+            - Path=/admin/users/**
+
+        - id: comment_service_admin
+          uri: lb://comment-service
+          predicates:
+            - Path=/admin/comments/**
+
+        - id: comment_service_private
+          uri: lb://comment-service
+          predicates:
+            - Path=/users/*/comments/**
+
+        - id: comment_service_public_comment_replies
+          uri: lb://comment-service
+          predicates:
+            - Path=/comments/**
+
+        - id: event_service_route
+          uri: lb://event-service
           predicates:
             - Path=/**
 
