@@ -15,6 +15,7 @@ import ru.practicum.service.AdminEventService;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/admin/events")
@@ -37,11 +38,11 @@ public class AdminEventsController {
 
         log.info("Get events from {} to {} ", from, size);
 
-        List<Long> usersList = users == null ? List.of() : Arrays.stream(users.split(","))
+        List<Long> usersList = Objects.isNull(users) ? List.of() : Arrays.stream(users.split(","))
                 .map(Long::valueOf)
                 .toList();
 
-        List<EventState> stateList = states == null ? null : states.stream().map(EventState::valueOf).toList();
+        List<EventState> stateList = Objects.isNull(states) ? null : states.stream().map(EventState::valueOf).toList();
 
         SearchEventsDto filter = SearchEventsDto.builder()
                 .users(usersList)

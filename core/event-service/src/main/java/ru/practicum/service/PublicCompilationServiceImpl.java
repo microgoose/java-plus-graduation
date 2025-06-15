@@ -10,6 +10,7 @@ import ru.practicum.model.Compilation;
 import ru.practicum.repository.CompilationRepository;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class PublicCompilationServiceImpl implements PublicCompilationService {
     public List<CompilationDto> getCompilations(Boolean pinned, int from, int size) {
         PageRequest page = PageRequest.of(from / size, size);
 
-        List<Compilation> compilations = (pinned == null)
+        List<Compilation> compilations = (Objects.isNull(pinned))
                 ? compilationRepository.findAll(page).getContent()
                 : compilationRepository.findAllByPinned(pinned, page);
 

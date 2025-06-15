@@ -7,7 +7,6 @@ import ru.practicum.user_service.dto.UserDto;
 
 import java.util.List;
 
-//@FeignClient(name = "${user-service.name}", url = "${user-service.url}", contextId = "AdminUsersClient")
 @FeignClient(name = "user-service", contextId = "AdminUsersClient")
 public interface AdminUsersClient {
 

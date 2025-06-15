@@ -112,9 +112,9 @@ public class PublicEventServiceImpl implements PublicEventService {
     public void countViews(List<? extends EventViews> events, LocalDateTime dateStart, LocalDateTime dateEnd, boolean unique) {
         if (events.isEmpty())
             return;
-        if (dateStart == null)
+        if (Objects.isNull(dateStart))
             dateStart = LocalDateTime.of(1970, 1, 1, 1, 1, 1);
-        if (dateEnd == null)
+        if (Objects.isNull(dateEnd))
             dateEnd = LocalDateTime.of(3000, 1, 1, 1, 1, 1);
 
         List<String> uris = events.stream().map(e -> "/events/" + e.getId()).toList();

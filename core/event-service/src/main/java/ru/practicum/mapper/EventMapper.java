@@ -8,6 +8,7 @@ import ru.practicum.model.Event;
 import ru.practicum.user_service.dto.UserShortDto;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class EventMapper {
     private final CategoryMapper categoryMapper;
 
     public EventFullDto toFullDto(Event event, UserShortDto userShortDto, Long views, Long confirmedRequests) {
-        if (event == null) {
+        if (Objects.isNull(event)) {
             return null;
         }
 
@@ -52,7 +53,7 @@ public class EventMapper {
     }
 
     public EventShortDto toShortDto(Event event, UserShortDto userShortDto, Long views, Long confirmedRequests) {
-        if (event == null) {
+        if (Objects.isNull(event)) {
             return null;
         }
 

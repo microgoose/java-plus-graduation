@@ -6,7 +6,6 @@ import ru.practicum.event_service.dto.CompilationDto;
 import ru.practicum.event_service.dto.NewCompilationDto;
 import ru.practicum.event_service.dto.UpdateCompilationRequest;
 
-//@FeignClient(name = "${event-service.name}", url = "${event-service.url}", contextId = "AdminCompilationsClient")
 @FeignClient(name = "event-service", contextId = "AdminCompilationsClient")
 public interface AdminCompilationsClient {
 

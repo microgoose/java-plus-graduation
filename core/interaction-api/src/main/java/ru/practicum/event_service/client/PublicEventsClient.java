@@ -9,7 +9,6 @@ import ru.practicum.event_service.dto.EventShortDto;
 
 import java.util.List;
 
-//@FeignClient(name = "${event-service.name}", url = "${event-service.url}", contextId = "PublicEventsClient")
 @FeignClient(name = "event-service", contextId = "PublicEventsClient")
 public interface PublicEventsClient {
 

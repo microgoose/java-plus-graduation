@@ -8,7 +8,6 @@ import ru.practicum.request_service.dto.ParticipationRequestDto;
 
 import java.util.List;
 
-//@FeignClient(name = "${request-service.name}", url = "${request-service.url}", contextId = "PrivateRequestsClient")
 @FeignClient(name = "request-service", contextId = "PrivateRequestsClient")
 public interface PrivateRequestsClient {
 

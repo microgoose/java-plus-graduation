@@ -12,6 +12,7 @@ import ru.practicum.user_service.dto.NewUserRequest;
 import ru.practicum.user_service.dto.UserDto;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Transactional(readOnly = true)
     public List<UserDto> getUsers(List<Long> ids, int from, int size) {
         PageRequest page = PageRequest.of(from / size, size);
-        List<User> users = (ids == null || ids.isEmpty())
+        List<User> users = (Objects.isNull(ids) || ids.isEmpty())
                 ? userRepository.findAll(page).getContent()
                 : userRepository.findByIdIn(ids, page);
         return userMapper.toDtoList(users);
