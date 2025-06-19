@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.controller.UserActionClient;
 import ru.practicum.error.ForbiddenActionException;
 import ru.practicum.error.NotFoundException;
 import ru.practicum.event_service.dto.EventFullDto;
@@ -12,17 +13,20 @@ import ru.practicum.event_service.dto.NewEventDto;
 import ru.practicum.event_service.dto.UpdateEventUserRequest;
 import ru.practicum.event_service.model.EventState;
 import ru.practicum.event_service.model.EventStateAction;
+import ru.practicum.ewm.stats.proto.ActionTypeProto;
 import ru.practicum.mapper.EventMapper;
 import ru.practicum.mapper.LocationMapper;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
 import ru.practicum.repository.CategoryRepository;
 import ru.practicum.repository.EventRepository;
+import ru.practicum.request_service.client.PrivateRequestsClient;
 import ru.practicum.user_service.client.AdminUsersClient;
 import ru.practicum.user_service.dto.UserDto;
 import ru.practicum.user_service.dto.UserShortDto;
 import ru.practicum.user_service.mapper.UserDtoMapper;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,7 +45,11 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     private final EventRepository eventRepository;
     private final EventService eventService;
 
+    private final PrivateRequestsClient privateRequestsClient;
+
     private final LocationMapper locationMapper;
+
+    private final UserActionClient collectorClient;
 
     @Override
     @Transactional(readOnly = true)
@@ -55,7 +63,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     public EventFullDto addEvent(Long userId, NewEventDto dto) {
         UserDto userDto = getUserById(userId);
         UserShortDto userShortDto = userDtoMapper.toShortDto(userDto);
-        return eventMapper.toFullDto(eventService.save(dto, userDto), userShortDto, 0L, 0L);
+        return eventMapper.toFullDto(eventService.save(dto, userDto), userShortDto, 0D, 0L);
     }
 
     @Override
@@ -114,6 +122,15 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         event.setInitiator(userId);
 
         return eventMapper.toFullDto(eventRepository.save(event), userDto, null, null);
+    }
+
+    @Override
+    public void likeEvent(Long eventId, Long userId) {
+        if (privateRequestsClient.isUserParticipatedInEvent(userId, eventId)) {
+            collectorClient.sendUserAction(userId, eventId, ActionTypeProto.ACTION_LIKE, Instant.now());
+        } else {
+            throw new IllegalArgumentException("User with id " + userId + " not participated in event " + eventId);
+        }
     }
 
     private UserDto getUserById(Long userId) {

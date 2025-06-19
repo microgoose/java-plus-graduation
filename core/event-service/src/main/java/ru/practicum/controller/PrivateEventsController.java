@@ -56,4 +56,11 @@ public class PrivateEventsController {
         log.info("Update user event {}", request);
         return ResponseEntity.ok(eventService.updateUserEvent(userId, eventId, request));
     }
+
+    @PutMapping("/{eventId}/like")
+    public ResponseEntity<Void> likeEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+        log.info("User {} attempting to like event {}", userId, eventId);
+        eventService.likeEvent(userId, eventId);
+        return ResponseEntity.ok().build();
+    }
 }

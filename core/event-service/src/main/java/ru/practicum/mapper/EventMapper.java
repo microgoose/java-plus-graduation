@@ -17,7 +17,7 @@ public class EventMapper {
     private final LocationMapper locationMapper;
     private final CategoryMapper categoryMapper;
 
-    public EventFullDto toFullDto(Event event, UserShortDto userShortDto, Long views, Long confirmedRequests) {
+    public EventFullDto toFullDto(Event event, UserShortDto userShortDto, Double rating, Long confirmedRequests) {
         if (Objects.isNull(event)) {
             return null;
         }
@@ -35,7 +35,7 @@ public class EventMapper {
                 .requestModeration(event.getRequestModeration())
                 .state(event.getState())
                 .confirmedRequests(confirmedRequests)
-                .views(views)
+                .rating(rating)
                 .location(locationMapper.toDto(event.getLocation()))
                 .initiator(userShortDto)
                 .category(categoryMapper.toDto(event.getCategory()))
@@ -52,7 +52,7 @@ public class EventMapper {
                 .toList();
     }
 
-    public EventShortDto toShortDto(Event event, UserShortDto userShortDto, Long views, Long confirmedRequests) {
+    public EventShortDto toShortDto(Event event, UserShortDto userShortDto,  Double rating, Long confirmedRequests) {
         if (Objects.isNull(event)) {
             return null;
         }
@@ -64,7 +64,7 @@ public class EventMapper {
                 .paid(event.getPaid())
                 .eventDate(event.getEventDate())
                 .confirmedRequests(confirmedRequests)
-                .views(views)
+                .rating(rating)
                 .initiator(userShortDto)
                 .category(categoryMapper.toDto(event.getCategory()))
                 .build();

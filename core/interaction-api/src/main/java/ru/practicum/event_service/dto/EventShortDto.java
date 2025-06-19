@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventShortDto implements EventViews {
+public class EventShortDto implements EventRating {
 
     private Long id;
 
@@ -35,7 +35,7 @@ public class EventShortDto implements EventViews {
 
     private Long confirmedRequests;
 
-    private Long views;
+    private Double rating;
 
     @NotNull
     private UserShortDto initiator;

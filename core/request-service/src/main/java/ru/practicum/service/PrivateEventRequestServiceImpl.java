@@ -4,11 +4,13 @@ import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.controller.UserActionClient;
 import ru.practicum.error.ForbiddenActionException;
 import ru.practicum.error.NotFoundException;
 import ru.practicum.event_service.client.PublicEventsClient;
 import ru.practicum.event_service.dto.EventFullDto;
 import ru.practicum.event_service.model.EventState;
+import ru.practicum.ewm.stats.proto.ActionTypeProto;
 import ru.practicum.mapper.ParticipationRequestMapper;
 import ru.practicum.model.ParticipationRequest;
 import ru.practicum.repository.ParticipationRequestRepository;
@@ -17,6 +19,7 @@ import ru.practicum.request_service.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request_service.dto.ParticipationRequestDto;
 import ru.practicum.request_service.model.ParticipationRequestStatus;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +34,12 @@ public class PrivateEventRequestServiceImpl implements PrivateEventRequestServic
     private final ParticipationRequestRepository requestRepository;
     private final PublicEventsClient eventsClient;
     private final ParticipationRequestMapper requestMapper;
+    private final UserActionClient collectorClient;
 
     @Override
     @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getEventRequests(Long userId, Long eventId) {
-        EventFullDto event = getEventOrThrow(eventId);
+        EventFullDto event = getEventOrThrow(eventId, userId);
 
         if (!Objects.equals(event.getInitiator().getId(), userId)) {
             throw new ForbiddenActionException("Only initiator can view requests");
@@ -46,7 +50,7 @@ public class PrivateEventRequestServiceImpl implements PrivateEventRequestServic
 
     @Override
     public EventRequestStatusUpdateResult updateRequestStatus(Long userId, Long eventId, EventRequestStatusUpdateRequest updateRequest) {
-        EventFullDto event = getEventOrThrow(eventId);
+        EventFullDto event = getEventOrThrow(eventId, userId);
 
         if (!Objects.equals(event.getInitiator().getId(), userId)) {
             throw new ForbiddenActionException("Only initiator can change request statuses");
@@ -93,7 +97,7 @@ public class PrivateEventRequestServiceImpl implements PrivateEventRequestServic
 
     @Override
     public ParticipationRequestDto createRequest(Long userId, Long eventId) {
-        EventFullDto event = getEventOrThrow(eventId);
+        EventFullDto event = getEventOrThrow(eventId, userId);
 
         if (Objects.equals(event.getInitiator().getId(), userId)) {
             throw new ForbiddenActionException("Initiator cannot request participation in their own event");
@@ -120,6 +124,8 @@ public class PrivateEventRequestServiceImpl implements PrivateEventRequestServic
                 ParticipationRequestStatus.CONFIRMED : ParticipationRequestStatus.PENDING);
         request.setCreated(LocalDateTime.now());
 
+        collectorClient.sendUserAction(userId, eventId, ActionTypeProto.ACTION_LIKE, Instant.now());
+
         return requestMapper.toDto(requestRepository.save(request));
     }
 
@@ -136,9 +142,14 @@ public class PrivateEventRequestServiceImpl implements PrivateEventRequestServic
         return requestMapper.toDto(requestRepository.save(request));
     }
 
-    private EventFullDto getEventOrThrow(Long eventId) {
+    @Override
+    public boolean isUserParticipatedInEvent(Long eventId, Long userId) {
+        return requestRepository.findByUserIdAndEventId(userId, eventId).isPresent();
+    }
+
+    private EventFullDto getEventOrThrow(Long eventId, Long userId) {
         try {
-            return eventsClient.getById(eventId);
+            return eventsClient.getById(eventId, userId);
         } catch (FeignException ex) {
             if (ex.status() == 404) {
                 throw new ForbiddenActionException("Event not found with id " + eventId);

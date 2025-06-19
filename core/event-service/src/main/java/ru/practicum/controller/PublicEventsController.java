@@ -73,13 +73,8 @@ public class PublicEventsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventFullDto> getEvent(@PathVariable Long id, HttpServletRequest request) {
-        log.info("Get event {}", id);
-
-        return ResponseEntity.ok(eventService.getEventById(id, LookEventDto.builder()
-                .id(null)
-                .uri(request.getRequestURI())
-                .ip(request.getRemoteAddr())
-                .build()));
+    public ResponseEntity<EventFullDto> getEvent(@PathVariable Long id, @RequestHeader("X-EWM-USER-ID") Long userId) {
+        log.info("Get event {} by user {}", id, userId);
+        return ResponseEntity.ok(eventService.getEventById(id, userId));
     }
 }

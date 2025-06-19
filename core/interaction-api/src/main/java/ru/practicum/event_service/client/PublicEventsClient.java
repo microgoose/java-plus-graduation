@@ -3,6 +3,7 @@ package ru.practicum.event_service.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.event_service.dto.EventFullDto;
 import ru.practicum.event_service.dto.EventShortDto;
@@ -24,5 +25,5 @@ public interface PublicEventsClient {
                                @RequestParam(defaultValue = "10") int size);
 
     @GetMapping("/events/{id}")
-    EventFullDto getById(@PathVariable Long id);
+    EventFullDto getById(@PathVariable Long id, @RequestHeader("X-EWM-USER-ID") Long userId);
 }

@@ -3,14 +3,13 @@ package ru.practicum.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.config.ServiceInfo;
-import ru.practicum.controller.StatsClient;
-import ru.practicum.dto.CreateEndpointHitDto;
-import ru.practicum.dto.ManyEndPointDto;
-import ru.practicum.dto.ReadEndpointHitDto;
+import ru.practicum.controller.RecommendationsClient;
+import ru.practicum.controller.UserActionClient;
 import ru.practicum.error.NotFoundException;
 import ru.practicum.event_service.dto.*;
 import ru.practicum.event_service.model.EventState;
+import ru.practicum.ewm.stats.proto.ActionTypeProto;
+import ru.practicum.ewm.stats.proto.RecommendedEventProto;
 import ru.practicum.model.Event;
 import ru.practicum.repository.EventRepository;
 import ru.practicum.repository.EventSpecification;
@@ -19,9 +18,10 @@ import ru.practicum.request_service.dto.ParticipationRequestDto;
 import ru.practicum.request_service.dto.RequestSearchDto;
 import ru.practicum.request_service.model.ParticipationRequestStatus;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +31,8 @@ public class PublicEventServiceImpl implements PublicEventService {
     private final EventRepository eventRepository;
     private final EventMappingService eventMapper;
     private final AdminRequestsClient adminRequestsClient;
-    private final StatsClient statsClient;
-    private final ServiceInfo serviceInfo;
+    private final RecommendationsClient recommendationsClient;
+    private final UserActionClient collectorClient;
 
     @Override
     public List<EventShortDto> getEvents(SearchEventsDto filter, LookEventDto lookEventDto) {
@@ -60,13 +60,20 @@ public class PublicEventServiceImpl implements PublicEventService {
 
         List<EventShortDto> eventShortDtoList = eventMapper.toShortDtoList(events);
 
+        List<Long> eventIds = eventShortDtoList.stream()
+                .map(EventShortDto::getId)
+                .collect(Collectors.toList());
+
+        Map<Long, Double> ratings = getEventRatings(eventIds);
+        eventShortDtoList.forEach(event -> event.setRating(ratings.getOrDefault(event.getId(), 0.0)));
+
         if (filter.getSort() == null || EventSort.EVENT_DATE.equals(filter.getSort())) {
             eventShortDtoList = eventShortDtoList.stream()
                     .sorted(Comparator.comparing(EventShortDto::getEventDate)) // Сортируем по eventDate
                     .collect(Collectors.toCollection(ArrayList::new));
         } else {
             eventShortDtoList = eventShortDtoList.stream()
-                    .sorted(Comparator.comparingLong(EventShortDto::getViews).reversed()) // Сортируем по views
+                    .sorted(Comparator.comparingDouble(EventShortDto::getRating).reversed()) // Сортируем по rating
                     .collect(Collectors.toCollection(ArrayList::new));
         }
 
@@ -78,58 +85,39 @@ public class PublicEventServiceImpl implements PublicEventService {
         if (from >= eventShortDtoList.size())
             return Collections.emptyList();
 
-        List<EventShortDto> eventsPage = eventShortDtoList.stream()
+        return eventShortDtoList.stream()
                 .skip(from)
                 .limit(size)
                 .collect(Collectors.toList());
-
-        countViews(eventsPage, filter.getRangeStart(), filter.getRangeEnd(), true);
-
-        List<String> uris = new ArrayList<>(eventsPage.stream().map(e -> "/events/" + e.getId()).toList());
-        uris.add("/events");
-        statsClient.saveHitGroup(new ManyEndPointDto(uris, lookEventDto.getIp()));
-
-        return eventsPage;
     }
 
     @Override
-    public EventFullDto getEventById(Long id, LookEventDto lookEventDto) {
-        Event event = eventRepository.findByIdAndState(id, EventState.PUBLISHED)
-                .orElseThrow(() -> new NotFoundException("Published event not found with id: " + id));
-
-        statsClient.saveHit(CreateEndpointHitDto.builder()
-                .app(serviceInfo.getServiceName())
-                .ip(lookEventDto.getIp())
-                .uri(lookEventDto.getUri())
-                .timestamp(LocalDateTime.now())
-                .build());
+    public EventFullDto getEventById(Long eventId, Long userId) {
+        Event event = eventRepository.findByIdAndState(eventId, EventState.PUBLISHED)
+                .orElseThrow(() -> new NotFoundException("Published event not found with id: " + eventId));
 
         EventFullDto eventFullDto = eventMapper.toFullDto(event);
-        countViews(List.of(eventFullDto), null, null, true);
+        eventFullDto.setRating(getEventRating(eventId));
+        collectorClient.sendUserAction(userId, eventId, ActionTypeProto.ACTION_VIEW, Instant.now());
+
         return eventFullDto;
     }
 
-    public void countViews(List<? extends EventViews> events, LocalDateTime dateStart, LocalDateTime dateEnd, boolean unique) {
-        if (events.isEmpty())
-            return;
-        if (Objects.isNull(dateStart))
-            dateStart = LocalDateTime.of(1970, 1, 1, 1, 1, 1);
-        if (Objects.isNull(dateEnd))
-            dateEnd = LocalDateTime.of(3000, 1, 1, 1, 1, 1);
+    private double getEventRating(Long eventId) {
+        Stream<RecommendedEventProto> interactions = recommendationsClient.getInteractionsCount(List.of(eventId));
+        return interactions
+                .filter(proto -> proto.getEventId() == eventId)
+                .findFirst()
+                .map(RecommendedEventProto::getScore)
+                .orElse(0.0);
+    }
 
-        List<String> uris = events.stream().map(e -> "/events/" + e.getId()).toList();
-        List<ReadEndpointHitDto> hits = statsClient.getStats(dateStart, dateEnd, uris, unique);
-
-        // Заносим значения views в список events
-        Map<Long, Long> workMap = new HashMap<>();
-        for (ReadEndpointHitDto r : hits) {
-            String decoded = r.getUri();
-            long i = Long.parseLong(decoded.substring(decoded.lastIndexOf("/") + 1));
-            workMap.put(i, (long) r.getHits());
-        }
-
-        for (EventViews e : events) {
-            e.setViews(workMap.getOrDefault(e.getId(), 0L));
-        }
+    private Map<Long, Double> getEventRatings(List<Long> eventIds) {
+        Stream<RecommendedEventProto> interactions = recommendationsClient.getInteractionsCount(eventIds);
+        return interactions
+                .collect(Collectors.toMap(
+                        RecommendedEventProto::getEventId,
+                        RecommendedEventProto::getScore,
+                        (existing, replacement) -> existing));
     }
 }
