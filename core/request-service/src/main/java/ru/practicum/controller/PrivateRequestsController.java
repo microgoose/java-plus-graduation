@@ -56,4 +56,12 @@ public class PrivateRequestsController {
         log.info("Cancel request {}", userId);
         return ResponseEntity.ok(requestService.cancelRequest(userId, requestId));
     }
+
+    @GetMapping("/check-participation/{eventId}")
+    ResponseEntity<Boolean> isUserParticipatedInEvent(@PathVariable("eventId") Long eventId,
+                                      @PathVariable("userId") Long userId) {
+
+        log.info("Checking if participation {} is participated in event {}", eventId, userId);
+        return ResponseEntity.ok(requestService.isUserParticipatedInEvent(eventId, userId));
+    }
 }

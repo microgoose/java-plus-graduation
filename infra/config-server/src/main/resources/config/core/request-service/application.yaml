@@ -26,3 +26,27 @@ spring:
 stats:
   client:
     serviceId: stats-server
+
+grpc:
+  client:
+    collector:
+      discovery:
+        enabled: true
+      serviceId: collector
+      address: discovery:///collector
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
+      metadata:
+        port: grpc.port
+
+    analyzer:
+      discovery:
+        enabled: true
+      serviceId: analyzer
+      address: discovery:///analyzer
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
+      metadata:
+        port: grpc.port

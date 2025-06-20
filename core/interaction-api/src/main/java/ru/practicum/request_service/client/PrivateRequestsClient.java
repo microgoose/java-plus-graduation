@@ -30,4 +30,9 @@ public interface PrivateRequestsClient {
     EventRequestStatusUpdateResult changeStatus(@PathVariable Long userId,
                                                 @PathVariable Long eventId,
                                                 @RequestBody EventRequestStatusUpdateRequest request);
+
+    @GetMapping("/users/{userId}/check-participation/{eventId}")
+    boolean isUserParticipatedInEvent(@PathVariable("eventId") Long eventId,
+                                      @PathVariable("userId") Long userId);
+
 }

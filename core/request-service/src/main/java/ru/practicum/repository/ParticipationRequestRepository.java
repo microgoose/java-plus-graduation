@@ -23,4 +23,5 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
     long countByEventIdAndStatus(Long eventId, ParticipationRequestStatus status);
 
     long countByEventId(Long eventId);
+
 }

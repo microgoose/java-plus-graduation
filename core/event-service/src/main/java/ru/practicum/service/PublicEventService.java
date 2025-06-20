@@ -11,5 +11,5 @@ public interface PublicEventService {
 
     List<EventShortDto> getEvents(SearchEventsDto searchEventsDto, LookEventDto lookEventDto);
 
-    EventFullDto getEventById(Long id, LookEventDto lookEventDto);
+    EventFullDto getEventById(Long id, Long userId);
 }
