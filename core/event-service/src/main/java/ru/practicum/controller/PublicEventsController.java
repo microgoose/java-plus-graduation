@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.event_service.config.RequestHeadersRegistry;
 import ru.practicum.event_service.dto.*;
 import ru.practicum.service.PublicEventService;
 
@@ -73,7 +74,7 @@ public class PublicEventsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventFullDto> getEvent(@PathVariable Long id, @RequestHeader("X-EWM-USER-ID") Long userId) {
+    public ResponseEntity<EventFullDto> getEvent(@PathVariable Long id, @RequestHeader(RequestHeadersRegistry.X_EWM_USER_ID) Long userId) {
         log.info("Get event {} by user {}", id, userId);
         return ResponseEntity.ok(eventService.getEventById(id, userId));
     }

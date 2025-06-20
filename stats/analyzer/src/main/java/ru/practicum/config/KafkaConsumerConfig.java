@@ -1,5 +1,6 @@
 package ru.practicum.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -7,21 +8,21 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
+import ru.practicum.mapper.YamlMapper;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class KafkaConfig {
-    private final KafkaProperties kafkaProperties;
+@RequiredArgsConstructor
+public class KafkaConsumerConfig {
 
-    public KafkaConfig(KafkaProperties kafkaProperties) {
-        this.kafkaProperties = kafkaProperties;
-    }
+    private final KafkaProperties kafkaProperties;
+    private final YamlMapper yamlMapper;
 
     @Bean
     public ConsumerFactory<String, EventSimilarityAvro> similarityConsumerFactory() {
-        Map<String, Object> props = flattenMap(kafkaProperties.getSimilarityConsumer().getProperties());
+        Map<String, Object> props = yamlMapper.flattenMap(kafkaProperties.getSimilarityConsumer().getProperties());
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
@@ -36,7 +37,7 @@ public class KafkaConfig {
 
     @Bean
     public ConsumerFactory<String, UserActionAvro> actionConsumerFactory() {
-        Map<String, Object> props = flattenMap(kafkaProperties.getActionConsumer().getProperties());
+        Map<String, Object> props = yamlMapper.flattenMap(kafkaProperties.getActionConsumer().getProperties());
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
@@ -49,17 +50,4 @@ public class KafkaConfig {
         return factory;
     }
 
-    // Для маппинга из application.yaml
-    private Map<String, Object> flattenMap(Map<String, Object> source) {
-        Map<String, Object> result = new HashMap<>();
-        source.forEach((key, value) -> {
-            if (value instanceof Map) {
-                ((Map<?, ?>) value).forEach((subKey, subValue) ->
-                        result.put(key + "." + subKey, subValue));
-            } else {
-                result.put(key, value);
-            }
-        });
-        return result;
-    }
 }
